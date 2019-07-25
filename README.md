@@ -1,16 +1,16 @@
-# 欢迎使用zkadmin后台管理
+# 欢迎使用zks后台管理
 
-![LOGO](https://test1-1256003521.cos.ap-guangzhou.myqcloud.com/static/zkadmin/logo.png)
+![LOGO](https://test1-1256003521.cos.ap-guangzhou.myqcloud.com/static/zksadmin/logo.png)
 
 [![Php Version](https://img.shields.io/badge/php-%3E=7.2-brightgreen.svg?maxAge=2592000)](https://secure.php.net/)
 [![Laravel Version](https://img.shields.io/badge/laravel-%3E=5.8-brightgreen.svg?maxAge=2592000)](https://laravel.com/)
 
 ## 项目简介
 
-zkadmin是一款基于laravel框架进行封装的后台管理系统,其中包含：
+zks是一款基于laravel框架进行封装的后台管理系统,其中包含：
 
 - rbac权限管理模块
-- 完整的[[UI组件](http://zkms.zam9.com/)]
+- 完整的[[UI组件](http://www.bootstrapdash.com/demo/purple-admin-free/index.html)]
 - 自定义配置管理
 - 图片上传,网络请求等常用的js公共函数
 - 项目弹出层引用了layer,可直接使用layer
@@ -18,15 +18,14 @@ zkadmin是一款基于laravel框架进行封装的后台管理系统,其中包�
 
 ## 安装教程
 
-- 克隆代码库`git clone https://github.com/zhukangs/zkadmin.git` 
-- 进入项目 ` cd zkadmin`  ，复制一份配置文件 `cp .env.example .env` ，并填写数据库相关配置
+- 克隆代码库`git clone https://github.com/zhukangs/zks.git` 
+- 进入项目 ` cd zks`  ，复制一份配置文件 `cp .env.example .env` ，并填写数据库相关配置
 - 然后执行命令 `composer install` 安装 laravel 框架，依赖库
 - 生成密钥 `php artisan key:generate`
 - 生成数据表以及部分初始数据 `php artisan migrate --seed` 
 - 配置域名(按laravel项目正常配置即可,解析到public目录)
 - 如发现权限相关问题 执行 chown -R 用户名:用户组 项目目录
-- 访问后台域名：`http://zkadmin.test/admin`，默认管理员账号：`admin`，密码：`password`，登录即可进入管理系统
-- 可能遇到的问题`Please provide a valid cache path.` ，解决：在`storage/framework/`下新建文件夹`views`
+- 访问后台域名：`http://zks.test`，默认管理员账号：`admin`，密码：`123456`，登录即可进入管理系统
 
 
 
@@ -41,18 +40,28 @@ zkadmin是一款基于laravel框架进行封装的后台管理系统,其中包�
 - 新建路由：在 `routes/admin.php` 编写路由，放至在 `prefix` 为 `admin` 的分组下即可，如下：
 
   ```php
-  Route::group(['prefix' => 'admin','namespace' => 'Admin','middleware'=>['auth.admin:admin'],],function($router){
-    //其他模块
-    .
-    .
-    //用户模块
-    $router->get('user', 'UserController@index')->name('admin.user.index');
-    $router->get('user/create', 'UserController@create')->name('admin.user.create');
-    $router->post('user/store', 'UserController@store')->name('admin.user.store');
-    $router->get('user/edit/{id}', 'UserController@edit')->name('admin.user.edit');
-    $router->post('user/update/{id}', 'UserController@update')->name('admin.user.update');
-    $router->post('user/del/{id}', 'UserController@delete')->name('admin.user.delete');
+  /**
+   * 需要加入 rbac 控制的路由置于此处
+   */
+  Route::group([
+      'middleware' => ['session.check', 'rbac'],
+      'as'         => 'rbac',
+  ], function ($route) {
+      //控制台
+      $route->get('console', 'Admin\IndexController@console');
+      $route->group(['prefix' => 'admin'], function ($route) {
+      //其他模块
+      .
+      .
+      //用户模块
+      $router->get('user', 'UserController@index')->name('admin.user.index');
+      $router->get('user/create', 'UserController@create')->name('admin.user.create');
+      $router->post('user/store', 'UserController@store')->name('admin.user.store');
+      $router->get('user/edit/{id}', 'UserController@edit')->name('admin.user.edit');
+      $router->post('user/update/{id}', 'UserController@update')->name('admin.user.update');
+      $router->post('user/del/{id}', 'UserController@delete')->name('admin.user.delete');
 
+      });
   });
   ```
 
@@ -98,7 +107,7 @@ zkadmin是一款基于laravel框架进行封装的后台管理系统,其中包�
   }
   ```
 
-- 新建视图：在 `resources/views/admin/` 下新建 `user` 文件夹，然后新建对应的视图文件即可，具体可参考 `administrator` 下的。
+- 新建视图：在 `resources/views/admin/` 下新建 `user` 文件夹，然后新建对应的视图文件即可。
 
 
 
@@ -106,23 +115,19 @@ zkadmin是一款基于laravel框架进行封装的后台管理系统,其中包�
 
 - 后台登录页
 
-![后台登录页](https://test1-1256003521.cos.ap-guangzhou.myqcloud.com/static/zkadmin/login.png)
+![后台登录页](https://test1-1256003521.cos.ap-guangzhou.myqcloud.com/static/zksadmin/login.jpg)
 
 - 后台首页
 
-![后台首页](https://test1-1256003521.cos.ap-guangzhou.myqcloud.com/static/zkadmin/index.jpg)
+![后台首页](https://test1-1256003521.cos.ap-guangzhou.myqcloud.com/static/zksadmin/index.jpg)
 
 - 管理员列表
 
-![管理员列表](https://test1-1256003521.cos.ap-guangzhou.myqcloud.com/static/zkadmin/admin_index.jpg)
+![管理员列表](https://test1-1256003521.cos.ap-guangzhou.myqcloud.com/static/zksadmin/list.jpg)
 
-- 权限编辑
+- 添加菜单
 
-![权限编辑](https://test1-1256003521.cos.ap-guangzhou.myqcloud.com/static/zkadmin/permission_edit.jpg)
-
-- 锁屏页
-
-![锁屏页](https://test1-1256003521.cos.ap-guangzhou.myqcloud.com/static/zkadmin/lock.jpg)
+![添加菜单](https://test1-1256003521.cos.ap-guangzhou.myqcloud.com/static/zksadmin/add.jpg)
 
 
 
